@@ -1,7 +1,5 @@
+import Courses from '@/features/courses/components/courses';
+
 export default function Home() {
-  return (
-    <div className="">
-      <div>Home</div>
-    </div>
-  );
+  return <Courses />;
 }

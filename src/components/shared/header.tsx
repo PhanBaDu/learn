@@ -17,7 +17,7 @@ export default async function Header() {
   const user = await getCurrentUser();
 
   return (
-    <div className="p-5 border-b border-b-muted flex justify-between items-center">
+    <div className="p-5 border-b border-b-muted flex justify-between items-center fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl">
       <div className="flex gap-2 items-center flex-1">
         <Logo width={100} height={40} />
       </div>
@@ -31,15 +31,15 @@ export default async function Header() {
         {user ? (
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger>
-              <Avatar className="rounded-2xl cursor-pointer">
+              <Avatar className="rounded-xl cursor-pointer">
                 <AvatarImage src={user.profileImage} />
-                <AvatarFallback className="text-xs rounded-2xl">
+                <AvatarFallback className="text-xs rounded-xl">
                   {user.firstName?.charAt(0) || ''}
                   {user.lastName?.charAt(0) || ''}
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 shadow-none">
+            <DropdownMenuContent align="end" className="w-44 border-none shadow-sm shadow-muted">
               <DropdownMenuLabel>
                 {user.firstName} {user.lastName}
               </DropdownMenuLabel>
