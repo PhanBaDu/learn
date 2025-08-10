@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id String @id @unique
+  email String @unique
+  firstName String
+  lastName String
+  profileImage String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  enrollments Enrollment[]
+  progress VideoProgress[]
+  favorites Favorite[]
+  reviews Review[]
+  courses Course[] // Courses created by this user
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  description String?
+  icon String?
+  color String?
+  createdAt DateTime @default(now())
+  
+  // Relations
+  courses Course[]
+}
+
+model Course {
+  id String @id @default(cuid())
+  title String
+  description String
+  learningObjectives String[] // ["Học HTML", "Học CSS", "Học JavaScript"]
+  thumbnail String
+  youtubePlaylistId String? // ID của YouTube playlist
+  duration Int // Tổng thời gian tính bằng giây
+  level String // BEGINNER, INTERMEDIATE, ADVANCED
+  language String // vi, en, etc.
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign Keys
+  categoryId String
+  instructorId String
+  
+  // Relations
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  instructor User @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  chapters Chapter[]
+  enrollments Enrollment[]
+  reviews Review[]
+}
+
+model Chapter {
+  id String @id @default(cuid())
+  title String
+  description String?
+  order Int // Thứ tự chương
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  courseId String
+  
+  // Relations
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  videos Video[]
+}
+
+model Video {
+  id String @id @default(cuid())
+  title String
+  description String?
+  youtubeVideoId String? // ID của YouTube video (null cho document/offline)
+  type String @default("VIDEO") // VIDEO, DOCUMENT, OFFLINE
+  duration Int // Thời gian tính bằng giây
+  order Int // Thứ tự trong chương
+  thumbnail String?
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  chapterId String
+  
+  // Relations
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  progress VideoProgress[]
+  favorites Favorite[]
+}
+
+model Enrollment {
+  id String @id @default(cuid())
+  enrolledAt DateTime @default(now())
+  completedAt DateTime?
+  
+  // Foreign Keys
+  userId String
+  courseId String
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+}
+
+model VideoProgress {
+  id String @id @default(cuid())
+  watchedDuration Int @default(0) // Thời gian đã xem (giây)
+  isCompleted Boolean @default(false)
+  lastWatchedAt DateTime @default(now())
+  
+  // Foreign Keys
+  userId String
+  videoId String
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, videoId])
+}
+
+model Favorite {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  userId String
+  videoId String
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, videoId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  rating Int // 1-5 sao
+  comment String?
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  userId String
+  courseId String
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+}
