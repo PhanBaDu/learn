@@ -1,17 +1,19 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ClockFading, UsersRound, Play } from 'lucide-react';
 import Image from 'next/image';
+import { Course as CourseType } from '@prisma/client';
 
-export default function Course() {
+export default function Course({ course }: { course: CourseType }) {
   return (
     <div className="rounded-2xl overflow-hidden">
       <Image
-        src={'/assets/test.png'}
+        src={course.thumbnail}
         alt="route"
         width={1000}
         height={1000}
-        className="w-full"
+        className="w-full h-56 object-cover"
         quality={100}
       />
       <div className="p-5 bg-muted/70 flex flex-col gap-2">
@@ -19,10 +21,12 @@ export default function Course() {
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <Avatar className="rounded-lg w-7 h-7">
-              <AvatarImage src="https://github.com/evilrabbit.png" />
-              <AvatarFallback>zv</AvatarFallback>
+              <AvatarImage src={course.teacherImage} />
+              <AvatarFallback>{course.instructorName}</AvatarFallback>
             </Avatar>
-            <span className="text-xs text-muted-foreground font-bold text-nowrap">Anonymous</span>
+            <span className="text-xs text-muted-foreground font-bold text-nowrap">
+              {course.instructorName}
+            </span>
           </div>
           <Button disabled={true} variant="ghost" className="p-0">
             <span className="text-xs text-muted-foreground font-bold leading-none">116h50p</span>
