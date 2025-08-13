@@ -11,7 +11,7 @@ export default function Sections() {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="border-none p-0 m-0">
-        <AccordionTrigger className="font-bold bg-muted/70 px-5 rounded-xl">
+        <AccordionTrigger className="font-bold bg-muted/70 px-5 rounded-xl border">
           <span>Bài học 1</span>
         </AccordionTrigger>
         <AccordionContent className='pb-0'>
