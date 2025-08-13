@@ -2,7 +2,6 @@ import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Inter } from 'next/font/google';
-import Header from '@/components/shared/header';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <Header />
         {children}
         <Toaster position="bottom-left" />
       </body>

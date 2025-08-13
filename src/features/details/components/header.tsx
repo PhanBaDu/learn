@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Logo from '../../../public/assets/logo.svg';
+import Logo from '../../../../public/assets/logo.svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import { getCurrentUser } from '@/hooks/current-user';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import Link from 'next/link';
+import { ArrowLeftIcon } from 'lucide-react';
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -23,6 +24,12 @@ export default async function Header() {
         <Link href="/">
           <Logo width={100} height={40} />
         </Link>
+        <Button variant={'link'} className="text-muted-foreground" asChild>
+          <Link href="/">
+            <ArrowLeftIcon className="w-4 h-4" />
+            Quay lại
+          </Link>
+        </Button>
       </div>
       <div className="flex-1">
         <Input

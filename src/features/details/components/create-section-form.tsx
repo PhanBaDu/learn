@@ -53,7 +53,7 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export default function CreateCourseForm() {
+export default function CreateSectionForm() {
   const teacherImageInputRef = useRef<HTMLInputElement>(null);
   const courseImageInputRef = useRef<HTMLInputElement>(null);
   const [teacherImagePreview, setTeacherImagePreview] = useState<string>('');
@@ -168,7 +168,7 @@ export default function CreateCourseForm() {
       <DialogTrigger asChild>
         <Button className="fixed bottom-5 right-5 font-bold" size={'lg'} variant={'outline'}>
           <FileVideoCamera strokeWidth={2.5} />
-          Thêm khóa học
+          Thêm bài học
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto">

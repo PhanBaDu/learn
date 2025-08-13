@@ -25,20 +25,57 @@ model User {
   courses Course[]
 }
 
-
 model Course {
   id String @id @default(cuid())
   title String
   description String
   instructorName String
   thumbnail String
-  teacherImage String 
+  teacherImage String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  sections Section[]
+  
   @@index([userId])
   @@index([createdAt])
+}
+
+model Section {
+  id String @id @default(cuid())
+  title String // Tiêu đề của phần (VD: "Chương 1: Giới thiệu")
+  order Int // Thứ tự section trong khóa học
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  courseId String
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  lessons Lesson[]
+  
+  @@index([courseId])
+  @@index([courseId, order])
+}
+
+model Lesson {
+  id String @id @default(cuid())
+  title String
+  description String?
+  youtubeVideoId String // ID của video YouTube
+  duration Int? // Thời lượng video tính bằng giây
+  order Int // Thứ tự bài học trong section
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  sectionId String
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  
+  @@index([sectionId])
+  @@index([sectionId, order])
 }
