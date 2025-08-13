@@ -23,6 +23,8 @@ import { FileVideoCamera, Upload, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useRef, useState } from 'react';
 import Image from 'next/image';
+import { createCourseWithReturn } from '@/lib/actions';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -34,7 +36,7 @@ const formSchema = z.object({
   teacherName: z.string().min(1, {
     message: 'Trường tên thầy giáo là bắt buộc',
   }),
-  courseImage: z.string().min(1, {
+  thumbnail: z.string().min(1, {
     message: 'Trường ảnh khóa học là bắt buộc',
   }),
   teacherImage: z.string().min(1, {
@@ -42,7 +44,6 @@ const formSchema = z.object({
   }),
 });
 
-// Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -57,6 +58,8 @@ export default function CreateCourseForm() {
   const courseImageInputRef = useRef<HTMLInputElement>(null);
   const [teacherImagePreview, setTeacherImagePreview] = useState<string>('');
   const [courseImagePreview, setCourseImagePreview] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,12 +67,12 @@ export default function CreateCourseForm() {
       title: '',
       description: '',
       teacherName: '',
-      courseImage: '',
+      thumbnail: '',
       teacherImage: '',
     },
   });
 
-  const handleImageUpload = async (file: File, fieldName: 'teacherImage' | 'courseImage') => {
+  const handleImageUpload = async (file: File, fieldName: 'teacherImage' | 'thumbnail') => {
     try {
       const base64 = await fileToBase64(file);
       form.setValue(fieldName, base64);
@@ -94,7 +97,7 @@ export default function CreateCourseForm() {
   const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      handleImageUpload(file, 'courseImage');
+      handleImageUpload(file, 'thumbnail');
     }
   };
 
@@ -108,18 +111,60 @@ export default function CreateCourseForm() {
 
   const removeCourseImage = () => {
     setCourseImagePreview('');
-    form.setValue('courseImage', '');
+    form.setValue('thumbnail', '');
     if (courseImageInputRef.current) {
       courseImageInputRef.current.value = '';
     }
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('title', values.title);
+      formData.append('description', values.description);
+      formData.append('teacherName', values.teacherName);
+      formData.append('thumbnail', values.thumbnail);
+      formData.append('teacherImage', values.teacherImage);
+
+      const result = await createCourseWithReturn(formData);
+
+      if (result.success) {
+        // Hiển thị toast thành công
+        toast.success('Khóa học đã được tạo thành công!');
+        // Reset form và đóng dialog
+        form.reset();
+        setTeacherImagePreview('');
+        setCourseImagePreview('');
+        setIsOpen(false);
+      } else {
+        // Hiển thị toast lỗi
+        if (result.message) {
+          toast.error(result.message);
+        }
+
+        // Hiển thị lỗi validation nếu có
+        if (result.errors && Object.keys(result.errors).length > 0) {
+          Object.entries(result.errors).forEach(([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              form.setError(field as keyof z.infer<typeof formSchema>, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Có lỗi xảy ra khi gửi form');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <Dialog modal={false}>
+    <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="fixed bottom-5 right-5 font-bold" size={'lg'} variant={'outline'}>
           <FileVideoCamera strokeWidth={2.5} />
@@ -238,7 +283,7 @@ export default function CreateCourseForm() {
             {/* Course Image Upload */}
             <FormField
               control={form.control}
-              name="courseImage"
+              name="thumbnail"
               render={() => (
                 <FormItem>
                   <FormLabel
@@ -296,8 +341,8 @@ export default function CreateCourseForm() {
               )}
             />
 
-            <Button type="submit" className="w-full shadow-none">
-              Submit
+            <Button type="submit" className="w-full shadow-none" disabled={isSubmitting}>
+              {isSubmitting ? 'Đang tạo...' : 'Submit'}
             </Button>
           </form>
         </Form>
