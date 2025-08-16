@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { getSectionsByCourseId } from '@/lib/actions';
 import CreateSectionForm from './create-section-form';
 import CreateLessonForm from './create-lesson-form';
+import VideoModal from '@/components/ui/video-modal';
 import { toast } from 'sonner';
 
 interface Lesson {
@@ -36,6 +37,8 @@ interface SectionsProps {
 export default function Sections({ courseId }: SectionsProps) {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const fetchSections = async () => {
     try {
@@ -62,6 +65,20 @@ export default function Sections({ courseId }: SectionsProps) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleLessonClick = (lesson: Lesson) => {
+    if (!lesson.youtubeVideoId) {
+      toast.error('Video không khả dụng');
+      return;
+    }
+    setSelectedLesson(lesson);
+    setIsVideoModalOpen(true);
+  };
+
+  const handleCloseVideoModal = () => {
+    setIsVideoModalOpen(false);
+    setSelectedLesson(null);
   };
 
   if (loading) {
@@ -142,10 +159,7 @@ export default function Sections({ courseId }: SectionsProps) {
                       key={lesson.id}
                       variant="ghost"
                       className="w-full justify-between items-center p-3 h-auto hover:bg-muted/50"
-                      onClick={() => {
-                        // TODO: Implement lesson playback
-                        toast.info(`Phát bài học: ${lesson.title}`);
-                      }}
+                      onClick={() => handleLessonClick(lesson)}
                     >
                       <div className="flex items-center gap-3 flex-1">
                         <Play className="text-primary h-4 w-4 flex-shrink-0" />
@@ -171,9 +185,20 @@ export default function Sections({ courseId }: SectionsProps) {
                 </div>
               )}
             </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </div>
-  );
+                  </AccordionItem>
+      ))}
+    </Accordion>
+    
+    {/* Video Modal */}
+    {selectedLesson && (
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={handleCloseVideoModal}
+        videoId={selectedLesson.youtubeVideoId}
+        title={selectedLesson.title}
+        description={selectedLesson.description || undefined}
+      />
+    )}
+  </div>
+);
 }
