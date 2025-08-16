@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Logo from '../../../public/assets/logo.svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -13,6 +12,7 @@ import {
 import { getCurrentUser } from '@/hooks/current-user';
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import Link from 'next/link';
+import SearchComponent from '@/components/ui/search';
 
 export default async function Header() {
   const user = await getCurrentUser();
@@ -25,10 +25,7 @@ export default async function Header() {
         </Link>
       </div>
       <div className="flex-1">
-        <Input
-          placeholder="Tìm kiếm khóa học, bài viết, video..."
-          className="p-2 rounded-xl h-11 shadow-none"
-        />
+        <SearchComponent />
       </div>
       <div className="flex-1 flex justify-end gap-5">
         {user ? (
