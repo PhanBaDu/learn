@@ -18,7 +18,7 @@ export default async function Header() {
   const user = await getCurrentUser();
 
   return (
-    <div className="p-5 border-b border-b-muted flex justify-between items-center fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl">
+    <div className="p-5 border-b border-b-muted flex justify-between items-center fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl gap-4">
       <div className="flex gap-2 items-center flex-1">
         <Link href="/">
           <Logo width={100} height={40} />
@@ -57,7 +57,7 @@ export default async function Header() {
         ) : (
           <>
             <RegisterLink>
-              <Button className="rounded-xl h-11 w-32 shadow-none" variant={'secondary'}>
+              <Button className="rounded-xl hidden lg:block h-11 w-32 shadow-none" variant={'secondary'}>
                 Đăng Ký
               </Button>
             </RegisterLink>

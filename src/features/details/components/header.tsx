@@ -31,7 +31,7 @@ export default async function Header() {
           </Link>
         </Button>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 hidden lg:block">
         <Input
           placeholder="Tìm kiếm khóa học, bài viết, video..."
           className="p-2 rounded-xl h-11 shadow-none"
@@ -64,12 +64,12 @@ export default async function Header() {
         ) : (
           <>
             <RegisterLink>
-              <Button className="rounded-xl h-11 w-32 shadow-none" variant={'secondary'}>
+              <Button className="rounded-xl h-11 hidden lg:w-32 shadow-none" variant={'secondary'}>
                 Đăng Ký
               </Button>
             </RegisterLink>
             <LoginLink>
-              <Button className="rounded-xl h-11 w-32 shadow-none" variant={'default'}>
+              <Button className="rounded-xl h-11 lg:w-32 shadow-none" variant={'default'}>
                 Đăng Nhập
               </Button>
             </LoginLink>
