@@ -1,10 +1,9 @@
 'use client';
 
+import { Search, User, Clock, Play } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, Play, Clock, User } from 'lucide-react';
-import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchResult {
@@ -171,13 +170,12 @@ export default function SearchComponent() {
                   <div className="flex items-start gap-3">
                     {/* Thumbnail */}
                     <div className="flex-shrink-0 w-16 h-12 bg-muted rounded-lg overflow-hidden">
-                      <img
+                      <Image
                         src={result.courseThumbnail}
                         alt={result.courseTitle}
+                        width={64}
+                        height={48}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/api/placeholder/64/48';
-                        }}
                       />
                     </div>
 

@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Play, Clock } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getSectionsByCourseId } from '@/lib/actions';
 import CreateSectionForm from './create-section-form';
 import CreateLessonForm from './create-lesson-form';
@@ -40,7 +40,7 @@ export default function Sections({ courseId }: SectionsProps) {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  const fetchSections = async () => {
+  const fetchSections = useCallback(async () => {
     try {
       const result = await getSectionsByCourseId(courseId);
       if (result.success && result.sections) {
@@ -54,11 +54,13 @@ export default function Sections({ courseId }: SectionsProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
 
   useEffect(() => {
-    fetchSections();
-  }, [courseId]);
+    if (courseId) {
+      fetchSections();
+    }
+  }, [courseId, fetchSections]);
 
   const formatDuration = (seconds: number | null): string => {
     if (!seconds) return '00:00';

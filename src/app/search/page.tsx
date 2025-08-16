@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Search, BookOpen, User, Clock, Play } from 'lucide-react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, Play, Clock, User, BookOpen } from 'lucide-react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface SearchResult {
@@ -25,7 +26,7 @@ interface SearchResult {
   relevanceScore?: number;
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [query, setQuery] = useState(searchParams.get('q') || '');
@@ -81,9 +82,11 @@ export default function SearchPage() {
   // Initial search when page loads with query parameter
   useEffect(() => {
     if (query) {
+      setResults([]);
+      setIsLoading(true);
       performSearch(query);
     }
-  }, []);
+  }, [query]);
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -126,7 +129,7 @@ export default function SearchPage() {
               <div>
                 <div className="mb-6">
                   <p className="text-muted-foreground">
-                    Tìm thấy {results.length} kết quả cho "{query}"
+                    Tìm thấy {results.length} kết quả cho &quot;{query}&quot;
                   </p>
                 </div>
                 
@@ -139,9 +142,11 @@ export default function SearchPage() {
                       <div className="flex gap-4">
                         {/* Thumbnail */}
                         <div className="flex-shrink-0 w-48 h-32 bg-muted rounded-lg overflow-hidden">
-                          <img
+                          <Image
                             src={result.courseThumbnail}
                             alt={result.courseTitle}
+                            width={192}
+                            height={128}
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/api/placeholder/192/128';
@@ -211,7 +216,7 @@ export default function SearchPage() {
                 <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Không tìm thấy kết quả</h3>
                 <p className="text-muted-foreground mb-4">
-                  Không tìm thấy video nào phù hợp với "{query}"
+                  Không tìm thấy video nào phù hợp với &quot;{query}&quot;
                 </p>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>Thử tìm kiếm với từ khóa khác:</p>
@@ -235,7 +240,24 @@ export default function SearchPage() {
             </p>
           </div>
         )}
+             </div>
+     </div>
+   );
+ }
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background pt-20">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Đang tải...</p>
+          </div>
+        </div>
       </div>
-    </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 }

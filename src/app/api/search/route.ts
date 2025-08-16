@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/utils/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -247,7 +249,6 @@ export async function GET(request: NextRequest) {
     // If still not enough results, try advanced fuzzy search using raw SQL
     if (results.length < 3) {
       try {
-        const searchPattern = searchWords.map(word => `%${word}%`).join(' ');
         const rawResults = await prisma.$queryRaw`
           SELECT DISTINCT l.*, s.title as section_title, s."order" as section_order, 
                  c.id as course_id, c.title as course_title, c."instructorName", 
@@ -271,7 +272,24 @@ export async function GET(request: NextRequest) {
         `;
 
         // Transform raw results to match our expected format
-        const transformedRawResults = (rawResults as any[]).map((row: any) => ({
+        const transformedRawResults = (rawResults as Array<{
+          id: string;
+          title: string;
+          description: string;
+          youtubeVideoId: string;
+          duration: number;
+          order: number;
+          sectionId: string;
+          createdAt: Date;
+          updatedAt: Date;
+          section_title: string;
+          section_order: number;
+          course_id: string;
+          course_title: string;
+          instructorName: string;
+          thumbnail: string;
+          teacherImage: string;
+        }>).map((row) => ({
           id: row.id,
           title: row.title,
           description: row.description,
@@ -300,7 +318,7 @@ export async function GET(request: NextRequest) {
         const uniqueResults = allResults.filter((result, index, self) => 
           index === self.findIndex(r => r.id === result.id)
         );
-        results = uniqueResults.slice(0, 20);
+        results = uniqueResults.slice(0, 20) as typeof results;
       } catch (error) {
         console.error('Raw SQL search error:', error);
         // Continue with existing results if raw SQL fails

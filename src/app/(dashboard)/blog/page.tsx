@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Calendar, Clock, User, ArrowRight, Code, Zap, Shield, Globe } from 'lucide-react';
+import { BookOpen, Calendar, Clock, User, ArrowRight, Code } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 
