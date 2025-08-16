@@ -209,6 +209,7 @@ export async function getSectionsByCourseId(courseId: string) {
 
     return { success: true, sections };
   } catch (error) {
+    console.error('Error fetching sections:', error);
     return {
       success: false,
       message: 'Có lỗi xảy ra khi lấy danh sách phần học',
@@ -240,6 +241,7 @@ export async function getCourseById(courseId: string) {
 
     return { success: true, course };
   } catch (error) {
+    console.error('Error fetching course:', error);
     return {
       success: false,
       message: 'Có lỗi xảy ra khi lấy thông tin khóa học',

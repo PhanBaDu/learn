@@ -23,7 +23,9 @@ import {
 import { Plus, ExternalLink } from 'lucide-react';
 import { createLesson } from '@/lib/actions';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCurrentUser } from '@/hooks/current-user';
+import { User } from '@prisma/client';
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -64,6 +66,23 @@ interface CreateLessonFormProps {
 export default function CreateLessonForm({ sectionId, onSuccess }: CreateLessonFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -121,6 +140,15 @@ export default function CreateLessonForm({ sectionId, onSuccess }: CreateLessonF
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  // Chỉ hiển thị form nếu user là ADMIN
+  if (isLoading) {
+    return null; // hoặc loading spinner
+  }
+
+  if (!currentUser || currentUser.role !== 'ADMIN') {
+    return null; // Không hiển thị gì nếu không phải ADMIN
   }
 
   return (
