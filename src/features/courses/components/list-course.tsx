@@ -1,13 +1,16 @@
 import Course from '@/features/courses/components/course';
-import prisma from '@/utils/db';
+import { getAllCoursesWithStats } from '@/lib/actions';
 
 export default async function ListCourse() {
-  const courses = await prisma.course.findMany();
+  const result = await getAllCoursesWithStats();
 
-  if (!courses) return <div>No courses found</div>;
+  if (!result.success || !result.courses) {
+    return <div>No courses found</div>;
+  }
+
   return (
     <>
-      {courses.map((course) => (
+      {result.courses.map((course) => (
         <Course key={course.id} course={course} />
       ))}
     </>

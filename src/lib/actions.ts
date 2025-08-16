@@ -5,6 +5,18 @@ import prisma from '@/utils/db';
 import { getCurrentUser } from '@/hooks/current-user';
 import z from 'zod';
 
+// Helper function để format thời gian từ giây sang "XhYp"
+function formatDuration(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  if (hours > 0) {
+    return `${hours}h${minutes.toString().padStart(2, '0')}p`;
+  } else {
+    return `${minutes}p`;
+  }
+}
+
 export async function createCourseWithReturn(formData: FormData) {
   try {
     const user = await getCurrentUser();
@@ -245,6 +257,57 @@ export async function getCourseById(courseId: string) {
     return {
       success: false,
       message: 'Có lỗi xảy ra khi lấy thông tin khóa học',
+    };
+  }
+}
+
+export async function getAllCoursesWithStats() {
+  try {
+    const courses = await prisma.course.findMany({
+      include: {
+        sections: {
+          include: {
+            lessons: {
+              select: {
+                duration: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // Tính toán số video và tổng thời gian cho mỗi khóa học
+    const coursesWithStats = courses.map(course => {
+      let totalVideos = 0;
+      let totalDuration = 0;
+
+      course.sections.forEach(section => {
+        totalVideos += section.lessons.length;
+        section.lessons.forEach(lesson => {
+          if (lesson.duration) {
+            totalDuration += lesson.duration;
+          }
+        });
+      });
+
+      return {
+        ...course,
+        totalVideos,
+        totalDuration,
+        formattedDuration: formatDuration(totalDuration),
+      };
+    });
+
+    return { success: true, courses: coursesWithStats };
+  } catch (error) {
+    console.error('Error fetching courses with stats:', error);
+    return {
+      success: false,
+      message: 'Có lỗi xảy ra khi lấy danh sách khóa học',
     };
   }
 }

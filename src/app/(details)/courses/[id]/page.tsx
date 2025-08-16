@@ -21,11 +21,12 @@ export default async function CourseDetail({ params }: CourseDetailPageProps) {
   const course = result.course;
 
   return (
-    <div className="w-full flex gap-5">
-      <div className="w-4/6 flex flex-col gap-5">
+    <div className="w-full flex flex-col lg:flex-row gap-5">
+      <div className="w-full lg:w-4/6 flex flex-col gap-5">
         <Sections courseId={courseId} />
       </div>
-      <div className="w-2/6">
+      {/* Ẩn phần mô tả trên mobile, chỉ hiển thị trên desktop */}
+      <div className="hidden lg:block w-full lg:w-2/6">
         <div className="space-y-4">
           <div>
             <h1 className="text-2xl font-bold">{course.title}</h1>
