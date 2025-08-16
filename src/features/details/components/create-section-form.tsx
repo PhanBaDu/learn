@@ -92,7 +92,7 @@ export default function CreateSectionForm({ courseId, onSuccess }: CreateSection
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="font-bold" size={'sm'} variant={'outline'}>
+        <Button className="font-bold" variant={'outline'}>
           <Plus className="h-4 w-4 mr-2" />
           Thêm phần học
         </Button>

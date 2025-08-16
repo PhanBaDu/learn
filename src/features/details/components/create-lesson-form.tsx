@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Play, ExternalLink } from 'lucide-react';
+import { Plus, ExternalLink } from 'lucide-react';
 import { createLesson } from '@/lib/actions';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -126,7 +126,7 @@ export default function CreateLessonForm({ sectionId, onSuccess }: CreateLessonF
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" className="w-full">
           <Plus className="h-4 w-4 mr-2" />
           Thêm bài học
         </Button>

@@ -122,7 +122,7 @@ export default function Sections({ courseId }: SectionsProps) {
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-3">
               {section.lessons.length === 0 ? (
-                <div className="text-center py-4 text-muted-foreground">
+                <div className="text-center py-4 text-muted-foreground flex flex-col gap-4">
                   <p className="text-sm">Chưa có bài học nào trong phần này.</p>
                   <CreateLessonForm 
                     sectionId={section.id} 
