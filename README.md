@@ -33,4 +33,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
+### Prerequisites for Vercel Deployment
+
+1. **Database Setup**: Ensure you have a PostgreSQL database accessible from Vercel
+2. **Environment Variables**: Set the following environment variables in Vercel:
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - `DIRECT_URL`: Direct database connection (same as DATABASE_URL)
+   - `KINDE_CLIENT_ID`: Your Kinde authentication client ID
+   - `KINDE_CLIENT_SECRET`: Your Kinde authentication client secret
+   - `KINDE_ISSUER_URL`: Your Kinde issuer URL
+   - `KINDE_SITE_URL`: Your Vercel deployment URL
+   - `KINDE_POST_LOGIN_REDIRECT_URL`: `/dashboard`
+   - `KINDE_POST_LOGOUT_REDIRECT_URL`: `/`
+
+### Build Process
+
+The project automatically runs `prisma generate` during build to ensure Prisma Client is up-to-date on Vercel.
+
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

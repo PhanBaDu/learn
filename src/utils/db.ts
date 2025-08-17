@@ -8,7 +8,7 @@ const prismaClientSingleton = () => {
       },
     },
     // Cấu hình connection pool
-    log: ['error', 'warn'],
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 };
 
