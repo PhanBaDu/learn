@@ -6,14 +6,12 @@ export async function GET() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user || user === null || !user.id) {
+  if (!user || !user.id) {
     return NextResponse.json({ error: 'Something went wrong' }, { status: 400 });
   }
 
   let dbUser = await prisma.user.findUnique({
-    where: {
-      id: user.id,
-    },
+    where: { id: user.id },
   });
 
   if (!dbUser) {
@@ -28,5 +26,7 @@ export async function GET() {
     });
   }
 
-  return NextResponse.redirect('http://localhost:3000/');
+  // 👇 Redirect về domain đúng (local hoặc Vercel)
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return NextResponse.redirect(`${baseUrl}/`);
 }
