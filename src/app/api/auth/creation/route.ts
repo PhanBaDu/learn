@@ -27,6 +27,6 @@ export async function GET() {
   }
 
   // 👇 Redirect về domain đúng (local hoặc Vercel)
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://learn-eta-ten.vercel.app';
   return NextResponse.redirect(`${baseUrl}/`);
 }
